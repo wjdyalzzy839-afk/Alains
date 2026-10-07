@@ -3,18 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alains AI</title>
+  <title>Alains</title>
 
   <style>
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
     }
 
     body {
-      margin: 0;
       min-height: 100vh;
-      font-family: Arial, sans-serif;
-      background: #080808;
+      background: #050505;
       color: white;
       display: flex;
       justify-content: center;
@@ -23,98 +24,106 @@
 
     .app {
       width: 100%;
-      max-width: 500px;
+      max-width: 430px;
       min-height: 100vh;
       padding: 25px 18px;
       display: flex;
       flex-direction: column;
     }
 
-    .logo {
-      text-align: center;
-      font-size: 34px;
-      font-weight: bold;
-      letter-spacing: 4px;
-      color: #d4af37;
-      margin-top: 30px;
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .subtitle {
-      text-align: center;
-      color: #aaa;
-      margin-top: 8px;
-      margin-bottom: 35px;
+    .logo {
+      color: #d6b45a;
+      font-size: 28px;
+      font-weight: bold;
+      letter-spacing: 3px;
+    }
+
+    .menu {
+      color: #d6b45a;
+      font-size: 25px;
     }
 
     .avatar {
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      border: 2px solid #d4af37;
-      margin: 0 auto 30px;
+      margin: 55px auto 25px;
+      width: 190px;
+      height: 250px;
+      border: 1px solid #8d7335;
+      border-radius: 95px 95px 35px 35px;
       display: flex;
       justify-content: center;
       align-items: center;
-      color: #d4af37;
-      font-size: 22px;
-      box-shadow: 0 0 30px rgba(212,175,55,.25);
+      color: #777;
+      background: radial-gradient(circle, #171717, #080808);
+      box-shadow: 0 0 35px rgba(190, 155, 60, 0.15);
+      text-align: center;
+      padding: 20px;
+    }
+
+    .avatar span {
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .greeting {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .greeting h1 {
+      font-size: 23px;
+      margin-bottom: 8px;
+    }
+
+    .greeting p {
+      color: #999;
+      font-size: 14px;
     }
 
     .chat {
-      flex: 1;
-      overflow-y: auto;
-      margin-bottom: 20px;
-    }
-
-    .message {
-      padding: 13px 16px;
-      border-radius: 16px;
-      margin-bottom: 12px;
-      line-height: 1.6;
-      max-width: 85%;
-      white-space: pre-wrap;
-    }
-
-    .ai {
-      background: #151515;
-      border: 1px solid #292929;
-      margin-left: auto;
-    }
-
-    .user {
-      background: #d4af37;
-      color: #080808;
-      margin-right: auto;
-    }
-
-    .input-area {
+      margin-top: auto;
       display: flex;
-      gap: 8px;
+      gap: 10px;
+      padding-top: 20px;
     }
 
     input {
       flex: 1;
-      padding: 15px;
-      border-radius: 14px;
-      border: 1px solid #333;
-      background: #151515;
+      background: #111;
+      border: 1px solid #39301b;
+      border-radius: 25px;
+      padding: 14px 18px;
       color: white;
       outline: none;
-      font-size: 16px;
+      font-size: 15px;
+    }
+
+    input:focus {
+      border-color: #b8953d;
     }
 
     button {
-      padding: 0 20px;
+      width: 50px;
+      height: 50px;
       border: none;
-      border-radius: 14px;
-      background: #d4af37;
-      color: #080808;
-      font-weight: bold;
-      font-size: 16px;
+      border-radius: 50%;
+      background: #c5a24b;
+      color: #050505;
+      font-size: 20px;
+      cursor: pointer;
     }
 
-    button:disabled {
-      opacity: .5;
+    #reply {
+      text-align: center;
+      color: #d6b45a;
+      min-height: 25px;
+      margin-bottom: 10px;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -123,99 +132,42 @@
 
   <div class="app">
 
-    <div class="logo">ALAINS</div>
-
-    <div class="subtitle">
-      مساعدك الذكي
+    <div class="top">
+      <div class="logo">ALAINS</div>
+      <div class="menu">☰</div>
     </div>
 
     <div class="avatar">
-      A
+      <span>مكان شخصية Alains<br>الثلاثية الأبعاد</span>
     </div>
 
-    <div id="chat" class="chat">
-      <div class="message ai">
-        أهلاً وجدي، معك Alains. كيف أقدر أساعدك اليوم؟
-      </div>
+    <div class="greeting">
+      <h1>أهلاً وجدي، معك Alains</h1>
+      <p>كيف أنت اليوم؟</p>
     </div>
 
-    <div class="input-area">
-      <input
-        id="messageInput"
-        type="text"
-        placeholder="اكتب رسالتك..."
-        autocomplete="off"
-      >
+    <div id="reply"></div>
 
-      <button id="sendButton">
-        إرسال
-      </button>
+    <div class="chat">
+      <input id="message" type="text" placeholder="اكتب رسالتك إلى Alains...">
+      <button onclick="sendMessage()">➤</button>
     </div>
 
   </div>
 
   <script>
-    const input = document.getElementById("messageInput");
-    const button = document.getElementById("sendButton");
-    const chat = document.getElementById("chat");
+    function sendMessage() {
+      const input = document.getElementById("message");
+      const reply = document.getElementById("reply");
 
-    function addMessage(text, type) {
-      const message = document.createElement("div");
-      message.className = "message " + type;
-      message.textContent = text;
-      chat.appendChild(message);
-      chat.scrollTop = chat.scrollHeight;
-    }
+      if (input.value.trim() === "") {
+        return;
+      }
 
-    async function sendMessage() {
-      const message = input.value.trim();
-
-      if (!message) return;
-
-      addMessage(message, "user");
-
+      reply.textContent = "وصلت رسالتك";
       input.value = "";
-      button.disabled = true;
-      button.textContent = "...";
-
-      try {
-        const response = await fetch("/api/chat", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            message: message
-          })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          addMessage(data.reply, "ai");
-        } else {
-          addMessage("حدث خطأ في الاتصال بالذكاء الاصطناعي.", "ai");
-          console.error(data);
-        }
-
-      } catch (error) {
-        addMessage("تعذر الاتصال بالخادم.", "ai");
-        console.error(error);
-      }
-
-      button.disabled = false;
-      button.textContent = "إرسال";
-      input.focus();
     }
-
-    button.addEventListener("click", sendMessage);
-
-    input.addEventListener("keydown", function(event) {
-      if (event.key === "Enter") {
-        sendMessage();
-      }
-    });
   </script>
 
 </body>
-  </html>
+</html>
