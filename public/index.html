@@ -1,1 +1,221 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alains AI</title>
 
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #080808;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 500px;
+      min-height: 100vh;
+      padding: 25px 18px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 34px;
+      font-weight: bold;
+      letter-spacing: 4px;
+      color: #d4af37;
+      margin-top: 30px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #aaa;
+      margin-top: 8px;
+      margin-bottom: 35px;
+    }
+
+    .avatar {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 2px solid #d4af37;
+      margin: 0 auto 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #d4af37;
+      font-size: 22px;
+      box-shadow: 0 0 30px rgba(212,175,55,.25);
+    }
+
+    .chat {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+
+    .message {
+      padding: 13px 16px;
+      border-radius: 16px;
+      margin-bottom: 12px;
+      line-height: 1.6;
+      max-width: 85%;
+      white-space: pre-wrap;
+    }
+
+    .ai {
+      background: #151515;
+      border: 1px solid #292929;
+      margin-left: auto;
+    }
+
+    .user {
+      background: #d4af37;
+      color: #080808;
+      margin-right: auto;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 8px;
+    }
+
+    input {
+      flex: 1;
+      padding: 15px;
+      border-radius: 14px;
+      border: 1px solid #333;
+      background: #151515;
+      color: white;
+      outline: none;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 0 20px;
+      border: none;
+      border-radius: 14px;
+      background: #d4af37;
+      color: #080808;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    button:disabled {
+      opacity: .5;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <div class="logo">ALAINS</div>
+
+    <div class="subtitle">
+      مساعدك الذكي
+    </div>
+
+    <div class="avatar">
+      A
+    </div>
+
+    <div id="chat" class="chat">
+      <div class="message ai">
+        أهلاً وجدي، معك Alains. كيف أقدر أساعدك اليوم؟
+      </div>
+    </div>
+
+    <div class="input-area">
+      <input
+        id="messageInput"
+        type="text"
+        placeholder="اكتب رسالتك..."
+        autocomplete="off"
+      >
+
+      <button id="sendButton">
+        إرسال
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    const input = document.getElementById("messageInput");
+    const button = document.getElementById("sendButton");
+    const chat = document.getElementById("chat");
+
+    function addMessage(text, type) {
+      const message = document.createElement("div");
+      message.className = "message " + type;
+      message.textContent = text;
+      chat.appendChild(message);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const message = input.value.trim();
+
+      if (!message) return;
+
+      addMessage(message, "user");
+
+      input.value = "";
+      button.disabled = true;
+      button.textContent = "...";
+
+      try {
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: message
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          addMessage(data.reply, "ai");
+        } else {
+          addMessage("حدث خطأ في الاتصال بالذكاء الاصطناعي.", "ai");
+          console.error(data);
+        }
+
+      } catch (error) {
+        addMessage("تعذر الاتصال بالخادم.", "ai");
+        console.error(error);
+      }
+
+      button.disabled = false;
+      button.textContent = "إرسال";
+      input.focus();
+    }
+
+    button.addEventListener("click", sendMessage);
+
+    input.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        sendMessage();
+      }
+    });
+  </script>
+
+</body>
+  </html>
