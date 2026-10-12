@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -5,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#050505">
   <title>Alains AI</title>
-
   <style>
     * {
       box-sizing: border-box;
@@ -17,7 +17,7 @@
     body {
       min-height: 100vh;
       background: #050505;
-      color: #fff;
+      color: white;
     }
 
     .app {
@@ -48,16 +48,6 @@
       font-size: 12px;
     }
 
-    .status::before {
-      content: "";
-      display: inline-block;
-      width: 7px;
-      height: 7px;
-      background: #d6b45a;
-      border-radius: 50%;
-      margin-left: 6px;
-    }
-
     .avatar {
       margin: 35px auto 20px;
       width: 160px;
@@ -69,7 +59,7 @@
       align-items: center;
       color: #d6b45a;
       background: radial-gradient(circle, #222, #080808);
-      box-shadow: 0 0 35px rgba(190, 155, 60, .15);
+      box-shadow: 0 0 35px #be9b3c26;
       text-align: center;
       padding: 20px;
     }
@@ -168,7 +158,6 @@
 
     button:disabled {
       opacity: .5;
-      cursor: wait;
     }
 
     .hint {
@@ -179,7 +168,6 @@
     }
   </style>
 </head>
-
 <body>
   <main class="app">
     <header class="top">
@@ -196,12 +184,7 @@
       <p>كيف أستطيع مساعدتك اليوم؟</p>
     </section>
 
-    <section
-      id="messages"
-      class="messages"
-      aria-live="polite"
-      aria-label="المحادثة"
-    ></section>
+    <section id="messages" class="messages" aria-live="polite"></section>
 
     <form id="chatForm" class="chat">
       <input
@@ -233,7 +216,6 @@
 
       bubble.textContent = text;
       messages.appendChild(bubble);
-
       return bubble;
     }
 
@@ -241,10 +223,7 @@
       event.preventDefault();
 
       const message = input.value.trim();
-
-      if (!message || sendButton.disabled) {
-        return;
-      }
+      if (!message || sendButton.disabled) return;
 
       addMessage(message, "user-message");
       input.value = "";
@@ -259,38 +238,29 @@
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({
-            message: message
-          })
+          body: JSON.stringify({ message })
         });
 
         const data = await response.json();
-
         waiting.remove();
 
         if (!response.ok) {
-          throw new Error(
-            data.error || "تعذر الحصول على رد من الخادم."
-          );
+          throw new Error(data.error || "حدث خطأ في الخادم.");
         }
 
         if (typeof data.reply !== "string" || !data.reply.trim()) {
-          throw new Error("وصل رد فارغ من الخادم.");
+          throw new Error("لم يصل رد صحيح من الخادم.");
         }
 
         addMessage(data.reply, "ai-message");
-
       } catch (error) {
         waiting.remove();
-
         addMessage(
-          "لم أتمكن من الرد الآن. تحقق من اتصال الخادم وإعدادات الذكاء الاصطناعي، ثم حاول مجددًا.",
+          "تعذر الرد: " + error.message,
           "ai-message",
           true
         );
-
         console.error("Alains chat error:", error);
-
       } finally {
         input.disabled = false;
         sendButton.disabled = false;
