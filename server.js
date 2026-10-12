@@ -1,5 +1,4 @@
 const express = require("express");
-const OpenAI = require("openai");
 const path = require("path");
 
 const app = express();
@@ -14,7 +13,7 @@ app.get("/", (req, res) => {
 app.get("/api/health", (req, res) => {
   res.json({
     status: "ok",
-    aiConfigured: Boolean(process.env.OPENAI_API_KEY)
+    aiConfigured: Boolean(process.env.GEMINI_API_KEY)
   });
 });
 
@@ -28,37 +27,65 @@ app.post("/api/chat", async (req, res) => {
       });
     }
 
-    if (!process.env.OPENAI_API_KEY) {
+    const apiKey = process.env.GEMINI_API_KEY;
+
+    if (!apiKey) {
       return res.status(500).json({
-        error: "مفتاح الذكاء الاصطناعي غير مضبوط في إعدادات الخادم."
+        error: "مفتاح Gemini غير مضبوط في إعدادات الخادم."
       });
     }
 
-    const client = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
-    });
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          systemInstruction: {
+            parts: [{
+              text: "أنت Alains، مساعد شخصي ذكي. تحدث باللغة العربية بوضوح وود، وساعد المستخدم في أسئلته ومهامه."
+            }]
+          },
+          contents: [{
+            role: "user",
+            parts: [{ text: message.trim() }]
+          }]
+        })
+      }
+    );
 
-    const response = await client.responses.create({
-      model: "gpt-5-mini",
-      instructions:
-        "أنت Alains، مساعد شخصي ذكي. أجب باللغة العربية بوضوح وودّ، وساعد المستخدم في أسئلته ومهامه.",
-      input: message.trim()
-    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Gemini API error:", data);
+      return res.status(502).json({
+        error: "تعذر الحصول على رد من Gemini. حاول مرة أخرى."
+      });
+    }
+
+    const reply = data.candidates?.[0]?.content?.parts
+      ?.map(part => part.text || "")
+      .join("")
+      .trim();
 
     res.json({
-      reply: response.output_text || "لم أتمكن من إنشاء رد. حاول مرة أخرى."
+      reply: reply || "لم أتمكن من إنشاء رد. حاول مرة أخرى."
     });
+
   } catch (error) {
-    console.error("Alains AI error:", error.message);
+    console.error("Alains server error:", error.message);
 
     res.status(500).json({
-      error: "تعذر الحصول على رد الآن. تحقق من إعدادات الخادم وحاول مجددًا."
+      error: "حدث خطأ في الاتصال. حاول مرة أخرى."
     });
   }
 });
 
 if (require.main === module) {
   const PORT = process.env.PORT || 3000;
+
   app.listen(PORT, () => {
     console.log(`Alains server running on port ${PORT}`);
   });
