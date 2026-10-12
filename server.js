@@ -1,3 +1,4 @@
+
 const express = require("express");
 const path = require("path");
 
@@ -36,7 +37,7 @@ app.post("/api/chat", async (req, res) => {
     }
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: {
@@ -70,14 +71,14 @@ app.post("/api/chat", async (req, res) => {
       .join("")
       .trim();
 
-    res.json({
+    return res.json({
       reply: reply || "لم أتمكن من إنشاء رد. حاول مرة أخرى."
     });
 
   } catch (error) {
     console.error("Alains server error:", error.message);
 
-    res.status(500).json({
+    return res.status(500).json({
       error: "حدث خطأ في الاتصال. حاول مرة أخرى."
     });
   }
