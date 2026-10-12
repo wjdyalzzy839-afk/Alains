@@ -13,13 +13,11 @@
       padding: 0;
       font-family: Arial, sans-serif;
     }
-
     body {
       min-height: 100vh;
       background: #050505;
-      color: #fff;
+      color: white;
     }
-
     .app {
       width: 100%;
       max-width: 500px;
@@ -29,25 +27,21 @@
       display: flex;
       flex-direction: column;
     }
-
     .top {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-
     .logo {
       color: #d6b45a;
       font-size: 28px;
       font-weight: bold;
       letter-spacing: 3px;
     }
-
     .status {
       color: #aaa;
       font-size: 12px;
     }
-
     .avatar {
       margin: 35px auto 20px;
       width: 160px;
@@ -59,38 +53,32 @@
       align-items: center;
       color: #d6b45a;
       background: radial-gradient(circle, #222, #080808);
-      box-shadow: 0 0 35px rgba(190, 155, 60, .15);
+      box-shadow: 0 0 35px #be9b3c26;
       text-align: center;
       padding: 20px;
     }
-
     .avatar span {
       font-size: 13px;
       line-height: 1.8;
     }
-
     .greeting {
       text-align: center;
       margin-bottom: 20px;
     }
-
     .greeting h1 {
       font-size: 23px;
       margin-bottom: 8px;
     }
-
     .greeting p {
       color: #999;
       font-size: 14px;
     }
-
     .messages {
       display: flex;
       flex-direction: column;
       gap: 12px;
       padding: 10px 0 20px;
     }
-
     .message {
       max-width: 90%;
       padding: 12px 15px;
@@ -100,24 +88,20 @@
       overflow-wrap: anywhere;
       white-space: pre-wrap;
     }
-
     .user-message {
       align-self: flex-start;
       background: #252015;
       border: 1px solid #594720;
     }
-
     .ai-message {
       align-self: flex-end;
       background: #151515;
       border: 1px solid #333;
     }
-
     .error-message {
       color: #ffb4a9;
       border-color: #743d35;
     }
-
     .chat {
       position: sticky;
       bottom: 0;
@@ -127,7 +111,6 @@
       padding: 15px 0 5px;
       background: #050505;
     }
-
     input {
       min-width: 0;
       flex: 1;
@@ -139,11 +122,9 @@
       outline: none;
       font-size: 15px;
     }
-
     input:focus {
       border-color: #b8953d;
     }
-
     button {
       flex-shrink: 0;
       width: 50px;
@@ -155,12 +136,9 @@
       font-size: 20px;
       cursor: pointer;
     }
-
     button:disabled {
       opacity: .5;
-      cursor: wait;
     }
-
     .hint {
       text-align: center;
       color: #666;
@@ -239,7 +217,7 @@
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ message: message })
+          body: JSON.stringify({ message })
         });
 
         const data = await response.json();
@@ -257,7 +235,7 @@
       } catch (error) {
         waiting.remove();
         addMessage(
-          "تعذر الرد الآن. تأكد من إعدادات الخادم، ثم حاول مجددًا.",
+          "تعذر الرد: " + error.message,
           "ai-message",
           true
         );
